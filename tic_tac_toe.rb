@@ -1,13 +1,39 @@
 puts "let's play tic tac toe"
-digits_on_board=(0..8).to_a
+class Board
+  attr_reader :state, :board
 
-def draw_board
-  puts '1  | 2 |  3'
-  puts '---+---+---'
-  puts '4  | 5 |  6'
-  puts '---+---+---'
-  puts '7  | 8 |  9'
+  def initialize
+    @state = 'blank'
+    @board = {
+      row1: [0, 1, 2],
+      row2: [3, 4, 5],
+      row3: [6, 7, 8]
+    }
+  end
+
+  def draw_board
+    puts " #{board[:row1][0]} | #{board[:row1][1]} | #{board[:row1][2]} "
+    puts '---+---+---'
+    puts " #{board[:row2][0]} | #{board[:row2][1]} | #{board[:row2][2]} "
+    puts '---+---+---'
+    puts " #{board[:row3][0]} | #{board[:row3][1]} | #{board[:row3][2]} "
+  end
+
+  def edit_board(pos,sym)
+    board.each do |key,val|
+      val.each_with_index do |num,idx|
+        if pos==num
+          board[key][idx]=sym
+        end
+      end
+    end
+    draw_board
+  end
+
 end
 
-puts digits_on_board[3]
-draw_board
+game_board = Board.new
+game_board.draw_board
+puts
+puts
+game_board.edit_board(5,'$')
