@@ -1,4 +1,6 @@
 puts "let's play tic tac toe"
+
+# this class deals with game board
 class Board
   attr_reader :state, :board
 
@@ -40,8 +42,8 @@ class Board
     draw_board
   end
 
-  def has_won?
-    board.values.each { |arr| return true if all_equal?(arr) } # goes over each row
+  def won?
+    board.each_value { |arr| return true if all_equal?(arr) } # goes over each row
     board.values.transpose.each { |arr| return true if all_equal?(arr) } # goes over each column
     return true if board[:row1][0] == board[:row2][1] && board[:row2][1] == board[:row3][2] # primary diagonal
     return true if board[:row1][2] == board[:row2][1] && board[:row2][1] == board[:row3][0] # secondary diagonal
@@ -53,8 +55,11 @@ class Board
 
   attr_writer :state, :board
 
-  def edit_state # changes state to filled once there are no numbers left in data structure
+  def edit_state
+    # changes state to end once there are no numbers left in data structure or if won? is true
     self.state = if board.values.flatten.none? { |num| num == num.to_i }
+                   'end'
+                 elsif won?
                    'end'
                  else
                    'in-game'
@@ -65,15 +70,57 @@ class Board
     self.state = 'blank'
   end
 
-  def all_equal?(arr) # returns true if all elm in array are same
+  def all_equal?(arr)
+    # returns true if all elm in array are same
     arr.uniq.size <= 1
   end
 end
 
-game_board = Board.new
-puts game_board.state
-game_board.edit_board(2, '$')
-game_board.edit_board(4, '$')
-game_board.edit_board(6, '$')
-puts game_board.state
-puts game_board.has_won?
+# this class deals with player in game
+class Player
+  attr_reader :symbol, :name, :turn
+
+  def initialize(nam = nil, sym = nil, trn = true)
+    @name = nam
+    @symbol = sym
+    @turn = trn
+  end
+
+  def change_turn
+    @turn = !@turn
+  end
+end
+# p1=Player.new('shrey','&',true)
+
+def initialize_setup
+  puts 'enter name1 >>'
+  n1 = gets.chomp
+  while true
+    puts "#{n1} enter ur symbol >>"
+    s1 = gets.chomp
+    if s1.length != 1
+      puts 'Erroneous input! Try again...'
+    else
+      p1 = Player.new(n1, s1)
+      break
+    end
+  end
+
+  puts 'enter name2 >>'
+  n2 = gets.chomp
+  while true
+    puts "#{n2} enter ur symbol and it cannot be #{s1}>>"
+    s2 = gets.chomp
+    if s2.length != 1 || s2==s1
+      puts 'Erroneous input! Try again...'
+    else
+      p2 = Player.new(n2, s2,false)
+      break
+    end
+  end
+
+  game_board = Board.new
+  game_board.draw_board
+end
+
+initialize_setup
