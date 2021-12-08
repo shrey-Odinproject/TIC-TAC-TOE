@@ -32,16 +32,6 @@ class Board
     edit_state
   end
 
-  # def reset_board
-  # self.board = {
-  #  row1: [0, 1, 2],
-  # row2: [3, 4, 5],
-  # row3: [6, 7, 8]
-  # }
-  # reset_state
-  # draw_board
-  # end
-
   def won?
     board.each_value { |arr| return true if all_equal?(arr) } # goes over each row
     board.values.transpose.each { |arr| return true if all_equal?(arr) } # goes over each column
@@ -56,19 +46,15 @@ class Board
   attr_writer :state, :board
 
   def edit_state
-    # changes state to end once there are no numbers left in data structure or if won? is true
-    self.state = if board.values.flatten.none? { |num| num == num.to_i }
-                   'end'
-                 elsif won?
+    # changes state to end once there are no numbers left in data structure or to win if won? is true
+    self.state = if won?
                    'win'
+                 elsif board.values.flatten.none? { |num| num == num.to_i }
+                   'end'
                  else
                    'in-game'
                  end
   end
-
-  # def reset_state
-  # self.state = 'blank'
-  # end
 
   def all_equal?(arr)
     # returns true if all elm in array are same
@@ -90,7 +76,6 @@ class Player
     @turn = !@turn
   end
 end
-# p1=Player.new('shrey','&',true)
 
 # creates 2 player and 1 board object and draws board and returns an array of the 3 objects
 def initialize_setup
@@ -122,11 +107,11 @@ def initialize_setup
 
   game_board = Board.new
   game_board.draw_board
-  return [p1, p2, game_board]
+  [p1, p2, game_board]
 end
 
-#asks for input to player and edits board 
-def get_input(p1, p2, game_board,choices)
+# asks for input to player and edits board
+def get_input(p1, p2, game_board, choices)
   while p1.turn
     puts "#{p1.name} enter digit for where u want to place ur symbol"
     p1_choice = gets.chomp
@@ -147,12 +132,12 @@ end
 def game
   choices = [] # keeps track of all choices made by both players so 2 players cant input on same spot
   p1, p2, game_board = initialize_setup
-  
+
   while game_board.state != 'end' || game_board.state != 'win'
 
-    get_input(p1, p2, game_board,choices)
+    get_input(p1, p2, game_board, choices) # 1st player input
 
-    if game_board.state == 'win'
+    if game_board.state == 'win' # if one of player has won
       puts "game over"
       puts p1.turn == false ? "#{p1.name} won!" : "#{p2.name} won!"
       break
@@ -163,7 +148,7 @@ def game
       break
     end
 
-    get_input(p2, p1, game_board,choices)
+    get_input(p2, p1, game_board, choices) # 2nd player input
 
     if game_board.state == 'win'
       puts "game over"
@@ -171,16 +156,14 @@ def game
       break
     end
   end
-  # if any win or draw ask for replaying
-  puts "press y/(any other key) to replay/exit"
-  return gets.chomp.downcase # whatever we input is returned 
+  # after game over ask to replay
+  puts 'press y/(any other key) to replay/exit'
+  gets.chomp.downcase # whatever we input is returned
 end
 
 # play multiple rounds until u wanna exit
 def main
-  while game == 'y' # if we entered y replay game
-    game
-  end
+  game while game == 'y' # if we entered y replay game
 end
 
 main
