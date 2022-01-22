@@ -166,4 +166,4 @@ def main
   game while game == 'y' # if we entered y replay game
 end
 
-main
+# main
