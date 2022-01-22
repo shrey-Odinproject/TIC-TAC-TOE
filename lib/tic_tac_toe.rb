@@ -72,13 +72,18 @@ class Player
     @turn = trn
   end
 
-  def change_turn
+  def switch_turn
     @turn = !@turn
   end
 end
 
-# creates 2 player and 1 board object and draws board and returns an array of the 3 objects
-def initialize_setup
+def setup_game_board
+  game_board = Board.new
+  game_board.draw_board
+  game_board
+end
+
+def setup_players
   puts 'enter name1 >>'
   n1 = gets.chomp
   while true
@@ -105,9 +110,7 @@ def initialize_setup
     end
   end
 
-  game_board = Board.new
-  game_board.draw_board
-  [p1, p2, game_board]
+  [p1, p2]
 end
 
 # asks for input to player and edits board
@@ -121,8 +124,8 @@ def get_input(p1, p2, game_board, choices)
       p1_choice = p1_choice.to_i
       game_board.edit_board(p1_choice, p1.symbol)
       choices.push(p1_choice)
-      p1.change_turn
-      p2.change_turn
+      p1.switch_turn
+      p2.switch_turn
       break
     end
   end
@@ -131,39 +134,43 @@ end
 # plays 1 round of tic tac toe
 def game
   choices = [] # keeps track of all choices made by both players so 2 players cant input on same spot
-  p1, p2, game_board = initialize_setup
+  p1, p2 = setup_players
+  game_board = setup_game_board
 
-  while game_board.state != 'end' || game_board.state != 'win'
-
+  while true
+    # check if game ends after every input
     get_input(p1, p2, game_board, choices) # 1st player input
 
-    if game_board.state == 'win' # if one of player has won
-      puts "game over"
-      puts p1.turn == false ? "#{p1.name} won!" : "#{p2.name} won!"
-      break
-    end
-    if game_board.state == 'end' # this is checked after p1's input as board is filled when p1 inputs 5 times and p2 4 times
-      puts "game over"
-      puts "It was a draw"
-      break
-    end
+    break if game_end?(game_board, p1, p2) # check if game ending condition becomes true
 
     get_input(p2, p1, game_board, choices) # 2nd player input
 
-    if game_board.state == 'win'
-      puts "game over"
-      puts p1.turn == false ? "#{p1.name} won!" : "#{p2.name} won!"
-      break
-    end
+    break if game_end?(game_board, p1, p2)
   end
-  # after game over ask to replay
-  puts 'press y/(any other key) to replay/exit'
-  gets.chomp.downcase # whatever we input is returned
+end
+
+def game_end?(game_board, p1, p2)
+  # checks to see if gameboard state is win/end so we can stop game and display final message
+  if game_board.state == 'win'
+    puts "game over"
+    puts p1.turn == false ? "#{p1.name} won!" : "#{p2.name} won!"
+    true
+  elsif game_board.state == 'end'
+    puts "game over"
+    puts "It was a draw"
+    true
+  end
 end
 
 # play multiple rounds until u wanna exit
 def main
-  game while game == 'y' # if we entered y replay game
+  loop do
+    game
+    # after game over ask to replay
+    puts 'press y/(any other key) to replay/exit'
+    replay_input = gets.chomp.downcase
+    break if replay_input != 'y'
+  end
 end
 
 # main

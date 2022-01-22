@@ -61,3 +61,6 @@ describe Board do
     end
   end
 end
+
+describe Player do
+end
