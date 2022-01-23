@@ -10,7 +10,8 @@ class Game
   end
 
   def setup_players
-    puts 'enter name1 >>'
+    # sets up 2 players with names and valid symbols
+    puts 'enter name for player 1 >>'
     n1 = gets.chomp
     while true
       puts "#{n1} enter ur 1 CHAR LONG symbol (no numbers) >>"
@@ -23,7 +24,7 @@ class Game
       end
     end
 
-    puts 'enter name2 >>'
+    puts 'enter name for player 2 >>'
     n2 = gets.chomp
     while true
       puts "#{n2} enter ur 1 CHAR LONG symbol and it cannot be #{s1} >>"
