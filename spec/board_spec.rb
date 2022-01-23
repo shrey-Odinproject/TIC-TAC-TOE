@@ -1,4 +1,6 @@
-require './lib/tic_tac_toe.rb'
+# frozen_string_literal:true
+
+require './lib/board'
 
 describe Board do
   describe '#won?' do
@@ -60,7 +62,4 @@ describe Board do
       end
     end
   end
-end
-
-describe Player do
 end
