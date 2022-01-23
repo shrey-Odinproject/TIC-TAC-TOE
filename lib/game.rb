@@ -1,5 +1,6 @@
 # frozen_string_literal:true
 
+require './lib/player'
 class Game
   attr_accessor :game_board, :p1, :p2, :choices
 
@@ -10,52 +11,46 @@ class Game
   end
 
   def setup_players
-    # sets up 2 players with names and valid symbols
-    puts 'enter name for player 1 >>'
-    n1 = gets.chomp
-    while true
-      puts "#{n1} enter ur 1 CHAR LONG symbol (no numbers) >>"
-      s1 = gets.chomp
-      if s1.length != 1 || s1.to_i != 0
-        puts 'Erroneous input! Try again...'
-      else
-        p1 = Player.new(n1, s1)
-        break
-      end
-    end
+    plyr1 = Player.new
+    plyr1.setup_p1
 
-    puts 'enter name for player 2 >>'
-    n2 = gets.chomp
-    while true
-      puts "#{n2} enter ur 1 CHAR LONG symbol and it cannot be #{s1} >>"
-      s2 = gets.chomp
-      if s2.length != 1 || s2 == s1 || s2.to_i != 0
-        puts 'Erroneous input! Try again...'
-      else
-        p2 = Player.new(n2, s2, false)
-        break
-      end
-    end
+    plyr2 = Player.new
+    plyr2.setup_p2(plyr1.symbol)
 
-    [p1, p2]
+    [plyr1, plyr2]
   end
 
   # asks for input to player and edits board
-  def get_input(p1, p2, game_board, choices)
-    while p1.turn
-      puts "#{p1.name} enter digit for where u want to place ur symbol"
-      p1_choice = gets.chomp
-      if p1_choice.to_i > 9 || p1_choice.to_i < 1 || choices.include?(p1_choice.to_i)
+  def get_input(plyr, other_player)
+    while plyr.turn
+      plyr_choice = ask_move(plyr)
+      unless valid_move?(plyr_choice)
         puts 'Erroneous input! Try again...'
       else
-        p1_choice = p1_choice.to_i
-        game_board.edit_board(p1_choice, p1.symbol)
-        choices.push(p1_choice)
-        p1.switch_turn
-        p2.switch_turn
+        update_board(plyr_choice, plyr.symbol)
+        swap_turns(plyr, other_player)
         break
       end
     end
+  end
+
+  def ask_move(plyr)
+    puts "#{plyr.name} enter digit for where u want to place ur symbol"
+    gets.chomp.to_i
+  end
+
+  def valid_move?(choice)
+    true unless choice > 9 || choice < 1 || choices.include?(choice)
+  end
+
+  def update_board(choice, symbol)
+    game_board.edit_board(choice, symbol)
+    choices.push(choice)
+  end
+
+  def swap_turns(plyr, other_player)
+    plyr.switch_turn
+    other_player.switch_turn
   end
 
   # plays 1 round of tic tac toe
@@ -63,17 +58,17 @@ class Game
     game_board.draw_board
     while true
       # check if game ends after every input
-      get_input(p1, p2, game_board, choices) # 1st player input
+      get_input(p1, p2) # 1st player input
 
-      break if game_end?(game_board, p1, p2) # check if game ending condition becomes true
+      break if game_end? # check if game ending condition becomes true
 
-      get_input(p2, p1, game_board, choices) # 2nd player input
+      get_input(p2, p1) # 2nd player input
 
-      break if game_end?(game_board, p1, p2)
+      break if game_end?
     end
   end
 
-  def game_end?(game_board, p1, p2)
+  def game_end?
     # checks to see if gameboard state is win/end so we can stop game and display final message
     if game_board.state == 'win'
       puts "game over"

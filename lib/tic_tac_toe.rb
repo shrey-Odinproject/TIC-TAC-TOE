@@ -17,4 +17,4 @@ def main
   end
 end
 
-# main
+main
