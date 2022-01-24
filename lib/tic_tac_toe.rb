@@ -7,7 +7,8 @@ require './lib/player'
 # play multiple rounds until u wanna exit
 def main
   loop do
-    puts "let's play tic tac toe"
+    puts "starting a new game of tic-tac-toe.... "
+    puts
     g = Game.new
     g.play
     # after game over ask to replay
@@ -17,4 +18,4 @@ def main
   end
 end
 
-main
+# main

@@ -6,17 +6,12 @@ class Game
 
   def initialize
     @game_board = Board.new
-    @p1, @p2 = setup_players
+    @p1, @p2 = nil, nil
     @choices = [] # keeps track of all choices made by both players so 2 players cant input on same spot
   end
 
-  def ask_move(plyr)
-    puts "#{plyr.name} enter digit for where u want to place ur symbol"
-    gets.chomp.to_i
-  end
-
   def valid_move?(choice)
-    true unless choice > 9 || choice < 1 || choices.include?(choice)
+    choice > 9 || choice < 1 || choices.include?(choice) ? false : true
   end
 
   def update_board(choice, symbol)
@@ -27,16 +22,6 @@ class Game
   def swap_turns(plyr, other_player)
     plyr.switch_turn
     other_player.switch_turn
-  end
-
-  def setup_players
-    plyr1 = Player.new
-    plyr1.setup_p1
-
-    plyr2 = Player.new
-    plyr2.setup_p2(plyr1.symbol)
-
-    [plyr1, plyr2]
   end
 
   # asks for input to player and edits board
@@ -55,6 +40,7 @@ class Game
 
   # plays 1 round of tic tac toe
   def play
+    self.p1, self.p2 = setup_players
     game_board.draw_board
     while true
       # check if game ends after every input
@@ -79,5 +65,22 @@ class Game
       puts "It was a draw"
       true
     end
+  end
+
+  private
+
+  def ask_move(plyr)
+    puts "#{plyr.name} enter digit for where u want to place ur symbol"
+    gets.chomp.to_i
+  end
+
+  def setup_players
+    plyr1 = Player.new
+    plyr1.setup_p1
+
+    plyr2 = Player.new
+    plyr2.setup_p2(plyr1.symbol)
+
+    [plyr1, plyr2]
   end
 end
