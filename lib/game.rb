@@ -10,6 +10,25 @@ class Game
     @choices = [] # keeps track of all choices made by both players so 2 players cant input on same spot
   end
 
+  def ask_move(plyr)
+    puts "#{plyr.name} enter digit for where u want to place ur symbol"
+    gets.chomp.to_i
+  end
+
+  def valid_move?(choice)
+    true unless choice > 9 || choice < 1 || choices.include?(choice)
+  end
+
+  def update_board(choice, symbol)
+    game_board.edit_board(choice, symbol)
+    choices.push(choice)
+  end
+
+  def swap_turns(plyr, other_player)
+    plyr.switch_turn
+    other_player.switch_turn
+  end
+
   def setup_players
     plyr1 = Player.new
     plyr1.setup_p1
@@ -32,25 +51,6 @@ class Game
         break
       end
     end
-  end
-
-  def ask_move(plyr)
-    puts "#{plyr.name} enter digit for where u want to place ur symbol"
-    gets.chomp.to_i
-  end
-
-  def valid_move?(choice)
-    true unless choice > 9 || choice < 1 || choices.include?(choice)
-  end
-
-  def update_board(choice, symbol)
-    game_board.edit_board(choice, symbol)
-    choices.push(choice)
-  end
-
-  def swap_turns(plyr, other_player)
-    plyr.switch_turn
-    other_player.switch_turn
   end
 
   # plays 1 round of tic tac toe
