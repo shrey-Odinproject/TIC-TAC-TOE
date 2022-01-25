@@ -83,14 +83,62 @@ describe Game do
 
     context 'when valid choice entered' do
       before do
+        allow(p1).to receive(:turn).and_return(true)
         allow(game_input).to receive(:ask_move).and_return(2)
-        allow(game_input).to receive(:update_board)
-        allow(game_input).to receive(:swap_turns)
+        allow(game_input).to receive(:valid_move?).and_return(true)
+        # allow(game_input).to receive(:update_board)
+        # allow(game_input).to receive(:swap_turns)
+        allow(p1).to receive(:symbol).and_return('@')
       end
-      it 'doesnot puts an error msg' do
+      it 'does not puts an error msg' do
         expect(game_input).not_to receive(:puts).with('Erroneous input! Try again...')
+        expect(game_input).to receive(:update_board).with(2, '@').once
+        expect(game_input).to receive(:swap_turns).with(p1, p2).once
         game_input.get_input(p1, p2)
       end
     end
+
+    context 'when entered 2 invalid and then 1 valid choice' do
+      before do
+        choices = game_input.instance_variable_get(:@choices)
+        choices.push(5)
+        allow(p1).to receive(:turn).and_return(true)
+        allow(game_input).to receive(:ask_move).and_return(12, 5, 3)
+        allow(game_input).to receive(:valid_move?).and_return(false, false, true)
+        allow(p1).to receive(:symbol).and_return('@')
+      end
+      it 'puts error msg twice' do
+        expect(game_input).to receive(:puts).with('Erroneous input! Try again...').twice
+        expect(game_input).to receive(:update_board).with(3, '@').once
+        expect(game_input).to receive(:swap_turns).with(p1, p2).once
+        game_input.get_input(p1, p2)
+      end
+    end
+  end
+
+  # describe '#game_end' do
+  #   subject(:game_obj) { described_class.new }
+  #   let(:p1) { instance_double(Player) }
+  #   let(:p2) { instance_double(Player) }
+  #   let(:gb) {instance_double(Board)}
+
+  #   context 'when board state is win & p1 has won' do
+  #     before do
+  #       allow(gb).to receive(:state).and_return('win')
+  #       allow(p1).to receive(:turn).and_return(false)
+  #       allow(p1).to receive(:name).and_return('shrey')
+  #     end
+
+  #     it 'puts victory msg for p1' do
+  #       expect(game_obj).to receive(:puts).with('game over').once
+  #       expect(game_obj).to receive(:puts).with('shrey won!').once
+  #       game_obj.game_end
+  #     end
+  #   end
+  # end
+
+  describe '#play' do
+    # looping script
+    # test methods inside it
   end
 end

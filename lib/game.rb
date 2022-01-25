@@ -28,33 +28,33 @@ class Game
   def get_input(plyr, other_player)
     while plyr.turn
       plyr_choice = ask_move(plyr)
-      unless valid_move?(plyr_choice)
-        puts 'Erroneous input! Try again...'
-      else
+      if valid_move?(plyr_choice)
         update_board(plyr_choice, plyr.symbol)
         swap_turns(plyr, other_player)
         break
+      else
+        puts 'Erroneous input! Try again...'
       end
     end
   end
 
   # plays 1 round of tic tac toe
   def play
-    self.p1, self.p2 = setup_players
+    setup_players
     game_board.draw_board
     while true
       # check if game ends after every input
       get_input(p1, p2) # 1st player input
 
-      break if game_end? # check if game ending condition becomes true
+      break if game_end # check if game ending condition becomes true
 
       get_input(p2, p1) # 2nd player input
 
-      break if game_end?
+      break if game_end
     end
   end
 
-  def game_end?
+  def game_end
     # checks to see if gameboard state is win/end so we can stop game and display final message
     if game_board.state == 'win'
       puts "game over"
@@ -75,12 +75,10 @@ class Game
   end
 
   def setup_players
-    plyr1 = Player.new
-    plyr1.setup_p1
+    self.p1 = Player.new
+    p1.setup_p1
 
-    plyr2 = Player.new
-    plyr2.setup_p2(plyr1.symbol)
-
-    [plyr1, plyr2]
+    self.p2 = Player.new
+    p2.setup_p2(p1.symbol)
   end
 end
